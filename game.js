@@ -1213,6 +1213,7 @@ class Game {
     // タイマー
     this.frameCount = 0;
     this.stageStartFrame = 0;
+    this.stageStartTime = 0;   // Date.now() ベースのタイマー開始時刻（ms）
     this.totalElapsedSeconds = 0;
     this.stageClearTime = 0;
 
@@ -1374,8 +1375,8 @@ class Game {
   _handleMenuInput(x, y) {
     const cx = 400;
     if (this.state === GameState.MENU) {
-      // START GAME ボタン: y=290〜340
-      if (x >= cx - 100 && x <= cx + 100 && y >= 290 && y <= 340) {
+      // START GAME ボタン: y=200〜250
+      if (x >= cx - 100 && x <= cx + 100 && y >= 200 && y <= 250) {
         this._startGame();
       }
     } else if (this.state === GameState.STAGE_CLEAR) {
@@ -1416,6 +1417,7 @@ class Game {
   _loadStage(index) {
     this.currentStage = Stage.create(index);
     this.stageStartFrame = this.frameCount;
+    this.stageStartTime = Date.now(); // ステージ開始時刻を記録（MENUやポーズ中の時間を除外するため）
     this.particles = new ParticleSystem();
     this.camera.x = 0;
     this.player.resetPosition(
@@ -1471,7 +1473,7 @@ class Game {
 
     const stage = this.currentStage;
     const player = this.player;
-    const elapsed = (this.frameCount - this.stageStartFrame) / 60;
+    const elapsed = (Date.now() - this.stageStartTime) / 1000; // Date.now()で実経過時間を計測（MENU待機中の時間を含まない）
 
     // ===== 1. 入力処理 =====
     if (this._isLeft() && this._isRight()) {
@@ -1536,8 +1538,9 @@ class Game {
         if (!isOverlapping(player.getBounds(), enemy.getBounds())) continue;
 
         // 踏みつけ判定
+        const STOMP_TOLERANCE = 4; // 踏みつけ判定の余裕幅（px）: 敵の上端より4px以内を踏みつけとして判定（視覚的ヒットボックス調整）
         const prevPlayerBottom = player.y + player.height - player.vy;
-        if (player.vy > 0 && prevPlayerBottom <= enemy.y + 4) {
+        if (player.vy > 0 && prevPlayerBottom <= enemy.y + STOMP_TOLERANCE) {
           // 踏みつけ成功
           enemy.crush();
           this.particles.emit('enemy_death', enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
@@ -1661,7 +1664,7 @@ class Game {
     // HUD
     const coinsCollected = stage.coins.filter(c => c.collected).length;
     const totalCoins = stage.coins.length;
-    const elapsed = (this.frameCount - this.stageStartFrame) / 60;
+    const elapsed = (Date.now() - this.stageStartTime) / 1000; // Date.now()で実経過時間を計測
     this.hud.draw(ctx, this.player, this.currentStageIndex, elapsed, coinsCollected, totalCoins);
 
     // モバイル仮想ボタン
