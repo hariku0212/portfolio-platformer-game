@@ -1377,8 +1377,8 @@ class Game {
   _handleMenuInput(x, y) {
     const cx = 400;
     if (this.state === GameState.MENU) {
-      // START GAME ボタン: y=200〜250
-      if (x >= cx - 100 && x <= cx + 100 && y >= 200 && y <= 250) {
+      // START GAME ボタン: y=290〜340
+      if (x >= cx - 100 && x <= cx + 100 && y >= 290 && y <= 340) {
         this._startGame();
       }
     } else if (this.state === GameState.STAGE_CLEAR) {
