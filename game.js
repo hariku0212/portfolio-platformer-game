@@ -1215,7 +1215,6 @@ class Game {
 
     // タイマー
     this.frameCount = 0;
-    this.stageStartFrame = 0;
     this.stageStartTime = 0;   // Date.now() ベースのタイマー開始時刻（ms）
     this.totalElapsedSeconds = 0;
     this.stageClearTime = 0;
@@ -1420,7 +1419,6 @@ class Game {
    */
   _loadStage(index) {
     this.currentStage = Stage.create(index);
-    this.stageStartFrame = this.frameCount;
     this.stageStartTime = Date.now(); // ステージ開始時刻を記録（MENUやポーズ中の時間を除外するため）
     this.particles = new ParticleSystem();
     this.camera.x = 0;
