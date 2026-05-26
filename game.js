@@ -1411,6 +1411,7 @@ class Game {
     this.player.resetFull(50, 350);
     this._loadStage(0);
     this.state = GameState.PLAYING;
+    this._startLoop(); // MENU停止後のループ再開
   }
 
   /**
@@ -1465,6 +1466,17 @@ class Game {
   _loop() {
     this._update();
     this._draw();
+    // MENUに戻ったらrAFを止める（描画は1フレーム済み）。再開は _startLoop() で行う
+    if (this.state === GameState.MENU) {
+      this._rafId = null;
+      return;
+    }
+    this._rafId = requestAnimationFrame(() => this._loop());
+  }
+
+  /** @private rAFループを（再）起動する。多重起動防止付き */
+  _startLoop() {
+    if (this._rafId !== null) return;
     this._rafId = requestAnimationFrame(() => this._loop());
   }
 
