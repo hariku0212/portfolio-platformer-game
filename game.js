@@ -1473,6 +1473,7 @@ class Game {
     this.frameCount++;
 
     if (this.state !== GameState.PLAYING) return;
+    if (this.player.state === PlayerState.DEAD) return;
 
     const stage = this.currentStage;
     const player = this.player;
