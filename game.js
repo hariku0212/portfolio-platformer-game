@@ -44,6 +44,9 @@ const PHYSICS = {
 /** 画面下落下判定Y座標 */
 const FALL_DEATH_Y = 480;
 
+/** 踏みつけ判定の余裕幅（px）: 敵の上端より4px以内を踏みつけとして判定（視覚的ヒットボックス調整） */
+const STOMP_TOLERANCE = 4;
+
 // ============================================================
 // AudioManager クラス
 // ============================================================
@@ -1510,7 +1513,7 @@ class Game {
     player.update(stage.platforms, stage.worldWidth);
 
     // ===== 5. 画面外落下判定 =====
-    if (player.y > FALL_DEATH_Y) {
+    if (player.y > FALL_DEATH_Y && !player.invincible) {
       player.lives -= 1;
       if (player.lives <= 0) {
         player.lives = 0;
@@ -1538,7 +1541,6 @@ class Game {
         if (!isOverlapping(player.getBounds(), enemy.getBounds())) continue;
 
         // 踏みつけ判定
-        const STOMP_TOLERANCE = 4; // 踏みつけ判定の余裕幅（px）: 敵の上端より4px以内を踏みつけとして判定（視覚的ヒットボックス調整）
         const prevPlayerBottom = player.y + player.height - player.vy;
         if (player.vy > 0 && prevPlayerBottom <= enemy.y + STOMP_TOLERANCE) {
           // 踏みつけ成功
