@@ -1432,6 +1432,7 @@ class Game {
 
   /** @private リトライ処理 */
   _retryGame() {
+    this.currentStageIndex = 0;
     this.player.resetFull(50, 350);
     this.totalElapsedSeconds = 0;
     this._loadStage(0);
