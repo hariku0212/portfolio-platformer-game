@@ -1241,7 +1241,7 @@ class Game {
     this.ctx = this.canvas.getContext('2d');
 
     this._setupInput();
-    this._loop();
+    this._startLoop();
   }
 
   // ============================================================
